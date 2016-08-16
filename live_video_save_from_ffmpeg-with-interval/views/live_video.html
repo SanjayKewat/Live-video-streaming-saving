@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .tr_imp{
+            font-size: 12px;
+        }
+        a {
+            color: #00B7FF;
+        }
+    </style>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script>
+$(function(){
+    $('.tr_view').hide();
+    $('#start_video').click(function(){
+//    alert('start call');
+//        var hr=$('#hr').val();
+        var min=$('#min').val();
+//        var sec=$('#sec').val();
+
+        /*$.get('/start/1/'+hr+'/'+min+'/'+sec,{},function(data){
+         $('#info').text(data);
+
+        });*/
+        if(min.length!=0){
+            $.get('/start/1/'+min,{},function(data){
+                $('#info').text(data);
+
+            });
+            $('#start_video').hide();
+            start_test();
+//            setTimeout(function(){ $('.tr_view').show()},10000); //showing process after 10 sec.
+            $('.tr_view').show();
+        }
+        else{
+            alert('Please enter minimum 1 minute for start video recording.');
+        }
+
+
+
+    });
+
+/*    $('#stop_video').click(function(){
+//    alert('stop call');
+      *//*  $.get('/start/2',{},function(data){
+            $('#info').text(data);
+        });*//*
+        start_test();
+    });*/
+
+
+    function start_test(){
+        var min=$('#min').val();
+        var myVar=setInterval(function(){myTimer()},1000);
+        var sec=min*60;
+        sec+=10;//here add additional 10 sec for starting or completing ffmpeg process.
+        var totmi_sec=sec*1000;
+        var rmgtm=0;
+
+        function myTimer() {
+            totmi_sec-=1000;
+            rmgtm=totmi_sec/1000;
+            if(rmgtm==-1)
+            {
+                clearTimeout(myVar);
+                $('#link').show();
+                $('#info').text('Video successfully created, click on view link for view video.');
+                $('#start_video').show();
+            }
+            else{
+                document.getElementById("countdown").innerHTML = rmgtm+' seconds remaining...';
+            }
+        }
+    }
+
+
+    live_view();
+});
+
+function live_view() {
+    var BaseURL = "http://root:root@169.254.22.166/";
+    if (window.innerWidth>1445)
+    {
+        DisplayWidth = "480";
+        DisplayHeight = "360";
+    }else if(window.innerWidth>1028 && window.innerWidth<=1445)
+    {
+        DisplayWidth = "360";
+        DisplayHeight = "280";
+    }
+    else
+    {
+        DisplayWidth = "320";
+        DisplayHeight = "220";
+    }
+    // The two following lines need to be changed if an an AXIS 241S(A)/241Q(A)/240Q/243SA is used:
+
+    var Camera = ""; // If you use an AXIS 240Q/241S(A)/241Q(A)/243SA, comment away this line by inserting "//"
+    // var Camera = "n"; // Change n to the Video source used in the AXIS 240Q/ 241S(A)/241Q(A)/243SA and remove "//"
+//    DisplayWidth = "280";
+//     DisplayHeight = "210";
+    // Go to the camera used and remove the "//" in front of the ImageResolution to be used.
+    // Note that only one can be enabled at a time.
+
+    // List of additional available resolutions is shown in the product's configuration.
+
+    // AXIS 207/210/210A/211/211A/212 PTZ/216FD/221/225FD
+    // var ImageResolution = "320x240";var DisplayWidth = "320";var DisplayHeight = "240";
+    // var ImageResolution = "640x480";var DisplayWidth = "640";var DisplayHeight = "480";
+
+    // AXIS 213 PTZ/214 PTZ/231D(+)/232D(+)/240Q/241S(A)/241Q(A)/243SA PAL
+    // var ImageResolution = "352x288";var DisplayWidth = "352";var DisplayHeight = "288";
+    // var ImageResolution = "704x576";var DisplayWidth = "704";var DisplayHeight = "576";
+
+    // AXIS 213 PTZ/214 PTZ/231D(+)/232D(+)/240Q/241S(A)/241Q(A)/243SA NTSC
+    // var ImageResolution = "352x240";var DisplayWidth = "352";var DisplayHeight = "240";
+    // var ImageResolution = "704x480";var DisplayWidth = "704";var DisplayHeight = "480";
+
+    // This is the path to the image generating file inside the camera itself
+    var File = "mjpg/video.mjpg?resolution=640x480";
+    // No changes required below this point
+    if (Camera != "") {
+        File += "&camera=" + Camera;
+    }
+    var output = "";
+    if ((navigator.appName == "Microsoft Internet Explorer") &&
+            (navigator.platform != "MacPPC") && (navigator.platform != "Mac68k")) {
+// If Internet Explorer under Windows then use ActiveX
+
+        output = '<OBJECT ID="Player" width='
+        output += DisplayWidth;
+        output += ' height=';
+        output += DisplayHeight;
+        output += 'CLASSID="CLSID:DE625294-70E6-45ED-B895-CFFA13AEB044" ';
+        output += 'CODEBASE="';
+        output += BaseURL;
+        output += 'activex/AMC.cab">';
+        output += '<PARAM NAME="MediaURL" VALUE="';
+        output += BaseURL;
+        output += File + '">';
+        output += '<param name="MediaType" value="mjpeg-unicast">';
+        output += '<param name="ShowStatusBar" value="1">';
+        output += '<param name="ShowToolbar" value="1">';
+        output += '<param name="AutoStart" value="1">';
+        output += '<param name="StretchToFit" value="1">';
+        output += '<BR><B>Axis Media Control</B><BR>';
+        output += 'The AXIS Media Control, which enables you ';
+        output += 'to view live image streams in Microsoft Internet';
+        output += ' Explorer, could not be registered on your computer.';
+        output += '<BR></OBJECT>';
+    } else {
+// If not IE for Windows use the browser itself to display
+
+        theDate = new Date();
+        output = '<IMG SRC="';
+        output += BaseURL;
+        output += File;
+        output += '&dummy=' + theDate.getTime().toString(10);
+        output += '" HEIGHT="';
+        output += DisplayHeight;
+        output += '" WIDTH="';
+        output += DisplayWidth;
+        output += '" ALT="Camera Image">';
+
+    }
+//     document.write(output);}
+    $('#ourvideo').append(output);
+}
+    </script>
+</head>
+<body>
+<table border="1">
+    <tr><td colspan="2"><div id="ourvideo"></div></td></tr>
+    <tr><td colspan="2">Define Recording Time in minutes...</td></tr>
+    <tr class="tr_imp"><td colspan="2">* Note additional time 10 second taken for initialising or finalising video processing ...</td></tr>
+  <!--  <tr><td>Hours</td><td><input type="text" id="hr" value="00" placeholder="hr"/> </td></tr>-->
+    <tr><td>Minutes</td><td><input type="text" id="min" placeholder="Enter minutes here.."/> </td></tr>
+ <!--   <tr><td>Seconds</td><td><input type="text" id="sec" value="00" placeholder="hr"/> </td></tr>-->
+   <tr style="margin-top: 10px;text-align: center;"><td colspan="2"><button id="start_video" >Start Recording</button></td><!--<td><button id="stop_video">Stop Recording</button> </td>--></tr>
+    <tr class="tr_view"><td colspan="2"><label id="info"></label><br><a href="/viewstream" id="link" style="display: none;">View video</a></td></tr>
+    <tr class="tr_view"><td colspan="2"><span id="countdown"></span></td></tr>
+</table>
+
+<a href="/viewstream">Click here to see Historical Video...</a><br>
+<a href="/get_dr">Click here to see Video Duration...</a>
+</body>
+</html>

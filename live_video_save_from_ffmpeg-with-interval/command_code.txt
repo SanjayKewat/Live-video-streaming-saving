@@ -1,0 +1,26 @@
+//Saving Video File Code Start here
+var date = new Date();
+var year = date.getFullYear();
+
+year = year.toString().substr(2,2);
+//           fileName = getRandomString();
+fileName='d_'+date.getDate()+'m_'+(date.getMonth()+1)+'y_'+year+'h_'+date.getHours()+'mi_'+date.getMinutes()+'s_'+date.getSeconds();
+var cmd='ffmpeg -i rtsp://172.24.22.127:554/axis-media/media.amp -vcodec libx264 -pix_fmt yuv420p -profile:v baseline -preset slower -crf 18 -vf "scale=trunc(in_w/2)*2:trunc(in_h/2)*2"'+' '+__dirname+'/uploads/'+fileName+'.mp4';
+child_process.exec(cmd, function (err, stdout, stderr){
+    if (err) {
+//        console.log(err.stack);
+        console.log("child processes failed with error code: " +err.code);
+//        console.log('Signal received: ' + err.signal);
+    }
+    console.log(stdout);
+//        res.send('Recording Start')
+});
+
+//Saving Video File Code End here
+kill -l 
+
+Taskkill /PID 12768 /F
+
+Taskkill /F /IM ffmpeg.exe
+
+I am feeling shy song

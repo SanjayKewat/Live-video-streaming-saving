@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=320, initial-scale=1"/>
+	<title>jsmpeg streaming</title>
+	<style type="text/css">
+		body {
+			background: #333;
+			text-align: center;
+			margin-top: 10%;
+		}
+		#videoCanvas {
+			/* Always stretch the canvas to 640x480, regardless of its
+			internal size. */
+			width: 640px;
+			height: 480px;
+		}
+	</style>
+</head>
+<body>
+	<!-- The Canvas size specified here is the "initial" internal resolution. jsmpeg will
+		change this internal resolution to whatever the source provides. The size the
+		canvas is displayed on the website is dictated by the CSS style.
+	-->
+	<canvas id="videoCanvas" width="640" height="480">
+		<p>
+			Please use a browser that supports the Canvas Element, like
+			<a href="http://www.google.com/chrome">Chrome</a>,
+			<a href="http://www.mozilla.com/firefox/">Firefox</a>,
+			<a href="http://www.apple.com/safari/">Safari</a> or Internet Explorer 10
+		</p>
+	</canvas>
+
+	  <div>
+            <button id="start-recording">Start Recording</button>
+            <button id="stop-recording" disabled="">Stop Recording</button>
+        </div>
+
+
+	<a href='' id='downloadLink'></a>
+	<script type="text/javascript" src="/js/jsmpg.js"></script>
+	<script type="text/javascript">
+
+	   var startRecordingbtn = document.getElementById('start-recording');
+            var stopRecordingbtn = document.getElementById('stop-recording');
+
+		// Show loading notice
+		var canvas = document.getElementById('videoCanvas');
+		var ctx = canvas.getContext('2d');
+	    
+	    ctx.fillStyle = '#fff';
+		ctx.font = '40pt Calibri';
+		ctx.fillText('Loading...', canvas.width/3, canvas.height/3);
+
+			// Setup the WebSocket connection and start the player
+		   var client = new WebSocket( 'ws://localhost:8084/' );
+		   var player = new jsmpeg(client, {canvas: canvas, autoplay: true, loop: true});
+		   
+		   
+		startRecordingbtn.onclick=function(){
+			startRecordingbtn.disabled=true;
+			stopRecordingbtn.disabled = false;
+		player.startRecording(function(player){
+    // Called when recording really starts; usually 
+    // when the next intra frame is received
+    });
+		// });
+
+		};
+
+stopRecordingbtn.onclick=function(){
+startRecordingbtn.disabled=false;
+stopRecordingbtn.disabled = true;
+
+// Stop recording and create a download link
+var blob = player.stopRecording();
+
+var filename = 'jsmpeg-recording.mpg';
+var a = document.getElementById('downloadLink');
+a.innerHTML = filename;
+a.download = filename;
+a.href = window.URL.createObjectURL(blob);
+
+};
+
+	</script>
+</body>
+</html>

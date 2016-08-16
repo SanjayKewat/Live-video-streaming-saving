@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf8">
+    <title>BinaryJS Test</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        div#video_player_box{ width: 620px;height: 440px; background:#000; margin:0px auto;}
+        div#video_controls_bar{ background: #333; padding:10px; color:#CCC;}
+    </style>
+</head>
+
+<body>
+
+<section id="main">
+    <h1>View Streaming</h1>
+    <h2><a href="/">Click here for record new video</a> </h2>
+    <fieldset style="display: none">
+        <legend>Drag n Drop</legend>
+        <aside id="upload-box">
+            <article id="progress">Drop file here</article>
+        </aside>
+    </fieldset>
+
+    <fieldset>
+        <legend>Select a Link</legend>
+
+        <nav id="list"></nav>
+    </fieldset>
+
+    <fieldset>
+        <legend>Play the Video</legend>
+        <div id="video_player_box">
+        <video id="video">
+
+        </video>
+            <div id="video_controls_bar">
+                <button id="playpausebtn">Pause</button>
+                <input id="seekslider" type="range" min="0" max="100" value="0" step="1">
+                <span id="curtimetext">00:00</span> / <span id="durtimetext">00:00</span>
+            </div>
+        </div>
+    </fieldset>
+
+
+</section>
+
+
+<script src="/js/lib/binary.js"></script>
+<script src="/js/lib/jquery.js"></script>
+<script src="/js/lib/common.js"></script>
+<script src="/js/lib/video.js"></script>
+<script src="/js/main2.js"></script>
+</body>
+</html>
